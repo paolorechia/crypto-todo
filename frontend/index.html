@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Todo front-end</title>
+    <script language="javascript" type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script language="javascript" type="text/javascript" src="todo.abi.js"></script>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
+
+</head>
+
+<body>
+
+    <h1> Hello, world! :)</h1>
+    <div class="todo-list">
+        <button onclick="createItem"> Test Create </button>
+
+    </div>
+    <script>
+        // function createItem(description) {
+        //     console.log('creating...', description);
+        //     return Todo.methods.createItem(description).call()
+        // }
+
+        async function startUp() {
+            var todoAddress = "0x607420F9dF09D131d737Aa788237d40c97fc716C";
+
+
+            const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+            console.log(accounts);
+            const account = accounts[0];
+
+            console.log(account);
+
+
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const signer = provider.getSigner(account);
+
+            const todoContract = new ethers.Contract(todoAddress, todoABI, provider);
+            const todoWithSiggner = todoContract.connect(signer);
+
+            console.log(todoContract);
+
+            let test = await todoContract.stringToItemState("INCOMPLETE");
+            console.log(test);
+
+            let test2 = await todoContract.stateItemToString(0);
+            console.log(test2);
+
+            let i = await todoContract.getListLength();
+            console.log(i);
+            
+            const result = await todoWithSiggner.createItem("test");
+            console.log(result);
+
+            i = await todoContract.getListLength();
+            console.log(i);
+
+            
+        }
+        window.addEventListener('load', async function () {
+            await startUp();
+        })
+    </script>
+</body>
+
+</html>
